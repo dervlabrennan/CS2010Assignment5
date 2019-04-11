@@ -110,10 +110,10 @@ public class CompetitionDijkstra {
     	while(!routes.isEmpty())
     	{
     		Street street = routes.poll();
-    		for(Street s : map.adj[street.v])
+    		for(Street s : map.adj[street.from])
     		{
-    			int v = s.v;
-    			int w = s.w;
+    			int v = s.from;
+    			int w = s.to;
     			if(distTo[w] > distTo[v] + s.length)
     			{
     				distTo[w] = distTo[v] + s.length;
@@ -135,7 +135,7 @@ public class CompetitionDijkstra {
     {
         for (Street s : routes)
         {
-            if (s.v == w)
+            if (s.from == w)
             {
             	return true;
             }         
@@ -147,7 +147,7 @@ public class CompetitionDijkstra {
     {
         for (Street s : routes) 
         {
-            if (s.v == w) 
+            if (s.from == w) 
             {
                 routes.remove(s);
                 s.length = newWeight;
@@ -205,14 +205,14 @@ public class CompetitionDijkstra {
     {
         public int V;
         public int E;
-        public HashSet<Street>[] adj;
+        public HashSet<CompetitionDijkstra.Street>[] adj;
 
         CityMap(int V) {
             this.V = V;
             adj = (HashSet<Street>[]) new HashSet[V];
             for (int v = 0; v < V; v++)
             {
-                adj[v] = new HashSet<Street>();
+                adj[v] = new HashSet<CompetitionDijkstra.Street>();
             }
         }
         public CityMap(In in)
@@ -229,35 +229,28 @@ public class CompetitionDijkstra {
 		}
         void addStreet(int v, int w, double weight){
             try {
-                validateIntersection(v);
-                validateIntersection(w);
                 Street e = new Street(v, w, weight);
                 this.adj[v].add(e);
                 this.E++;
             }
             catch(IllegalArgumentException ignore) {}
         }
-        private void validateIntersection(int v) 
-        {
-            if (v < 0 || v >= V)
-                throw new IllegalArgumentException("vertex " + v + " is not between 0 and " + (V-1));
-        }
     }
     
     public class Street 
     {
-        public int v;
-        public int w;
+        public int from;
+        public int to;
         public double length;
 
         public Street(int v, int w, double length){
-            this.v = v;
-            this.w = w;
+            this.from = v;
+            this.to = w;
             this.length = length;
         }
         public Street(int v, double length)
         {
-        	this.v = v;
+        	this.from = v;
         	this.length = length;
         }
     }
